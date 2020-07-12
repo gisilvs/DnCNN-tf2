@@ -2,6 +2,10 @@ import random
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from dncnn import DnCNN
+from tensorflow.keras.losses import MeanSquaredError
+from tensorflow.keras.optimizers import Adam
+
 
 
 def decode_img(img):
@@ -31,12 +35,23 @@ def augment(image):
     image = tf.image.random_crop(image, size=[40, 40, 1])
     image = tf.image.convert_image_dtype(image, tf.float32)
     noise = gaussian_noise_layer()
-    image = image + noise
 
-    return image, noise
+    return image + noise, noise, image
+
+@tf.function
+def train_step(images, targets):
+    with tf.GradientTape() as tape:
+        # training=True is only needed if there are layers with different
+        # behavior during training versus inference (e.g. Dropout).
+        predictions = model(images, training=True)
+        loss = loss_object(targets, predictions)
+    gradients = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+    train_loss(loss)
 
 
-batch_size = 32
+batch_size = 64
 img_height = 40
 img_width = 40
 AUTOTUNE = tf.data.experimental.AUTOTUNE
@@ -51,7 +66,7 @@ train_ds = tf.data.Dataset.list_files(data_dir)
 
 def configure_for_performance(ds):
     ds = ds.cache()
-    ds = ds.shuffle(buffer_size=1000)
+    ds = ds.shuffle(buffer_size=100)
     ds = ds.map(augment, num_parallel_calls=AUTOTUNE)
     ds = ds.batch(batch_size)
     ds = ds.prefetch(buffer_size=AUTOTUNE)
@@ -60,12 +75,32 @@ def configure_for_performance(ds):
 
 train_ds = configure_for_performance(train_ds)
 
-image_batch, target_batch = next(iter(train_ds))
+image_batch, target_batch, true_batch = next(iter(train_ds))
 
-plt.figure(figsize=(10, 10))
+'''plt.figure(figsize=(10, 10))
 for i in range(9):
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(image_batch[i].numpy().squeeze(), cmap='gray')
-    plt.axis("off")
+    plt.axis("off")'''
 
-a = 0
+model = DnCNN()
+
+loss_object = MeanSquaredError()
+
+optimizer = Adam()
+
+train_loss = tf.keras.metrics.Mean(name='train_loss')
+
+EPOCHS = 5
+
+for epoch in range(EPOCHS):
+    # Reset the metrics at the start of the next epoch
+    train_loss.reset_states()
+
+    for images, targets, true in train_ds:
+        train_step(images, targets)
+        print('ciao')
+
+    template = 'Epoch {}, Loss: {}'
+    print(template.format(epoch + 1,
+                          train_loss.result()))
