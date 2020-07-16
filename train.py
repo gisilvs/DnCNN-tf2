@@ -11,7 +11,7 @@ from dncnn import DnCNN
 from dncnnrn import DnCNNRN
 
 parser = argparse.ArgumentParser(description='DnCNN tf2')
-parser.add_argument('--model', default='DnCNN', type=str, help='choose a type of model')
+parser.add_argument('--model', default='DnCNN', choices=['DnCNN', 'DnCNNRN'], type=str, help='choose a type of model')
 parser.add_argument('--batch_size', default=64, type=int, help='batch size')
 parser.add_argument('--train_data', default='data/train', type=str, help='path of train data')
 parser.add_argument('--test_data', default='data/test', type=str, help='path of test data')
@@ -22,7 +22,7 @@ parser.add_argument('--wd', default=0.0001, type=float, help='weight decay')
 parser.add_argument('--depth', default=17, type=int, help='depth of the model')
 parser.add_argument('--train_patch', default=40, type=int, help='size for training patches')
 parser.add_argument('--test_size', default=180, type=int, help='size for test images')
-parser.add_argument('--format', default='jpg', type=str, help='image format')
+parser.add_argument('--format', default='jpg', choices=['jpg', 'png'], type=str, help='image format')
 parser.add_argument('--weights_path', default='weights/vgg', type=str, help='path for saving model weights')
 parser.add_argument('--model_path', default='saved_model/vgg', type=str, help='path for saving whole model')
 parser.add_argument('--exp_name', default='vgg', type=str, help='name for experiment logs')
@@ -46,11 +46,11 @@ NOISE_STD = args.sigma
 SCALES = [1, 0.9, 0.8, 0.7]  # used for data augmentation
 TRAIN_PATCH_DIM = args.train_patch
 TEST_DIM = args.test_size
-format = args.format
+FORMAT = args.format
 
 # Train and test set directories
-TEST_DIR = 'data/test/*.' + format
-TRAIN_DIR = 'data/train/*' + format
+TEST_DIR = 'data/test/*.' + FORMAT
+TRAIN_DIR = 'data/train/*' + FORMAT
 
 # Paths for saving weights and model
 WEIGHTS_PATH = args.weights_path
@@ -71,12 +71,10 @@ def augment(image):
     '''prepare and augment input image, and generate noise mask'''
     image = tf.io.read_file(image)
 
-    if format == 'jpg':
+    if FORMAT == 'jpg':
         image = tf.image.decode_jpeg(image, channels=1)
-    elif format == 'png':
+    elif FORMAT == 'png':
         image = tf.image.decode_png(image, channels=1)
-    else:
-        raise TypeError("Supported formats: jpg or png")
 
     # augmentation 1:
     # rescale input to obtain crops at different level of detail
@@ -119,12 +117,10 @@ def augment_test(image):
     # No augmentation and different size from training
     image = tf.io.read_file(image)
 
-    if format == 'jpg':
+    if FORMAT == 'jpg':
         image = tf.image.decode_jpeg(image, channels=1)
-    elif format == 'png':
+    elif FORMAT == 'png':
         image = tf.image.decode_png(image, channels=1)
-    else:
-        raise TypeError("Supported formats: jpg or png")
 
     image = tf.image.resize_with_crop_or_pad(image, 180, 180)
     image = tf.image.convert_image_dtype(image, tf.float32)
@@ -183,8 +179,6 @@ if MODEL == 'DnCNN':
     model = DnCNN(depth=DEPTH)
 elif MODEL == 'DnCNNRN':
     model = DnCNNRN(depth=DEPTH)
-else:
-    raise TypeError("Supported models: DnCNN or DnCNNRN")
 
 loss_object = MeanSquaredError()
 optimizer = tfa.optimizers.AdamW(weight_decay=WEIGHT_DECAY, learning_rate=LEARNING_RATE)
