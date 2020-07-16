@@ -2,6 +2,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.initializers import he_uniform
 from tensorflow.keras.layers import Conv2D, BatchNormalization, ReLU
 
+
 class DnCNN(Model):
     def __init__(self, depth=17):
         super(DnCNN, self).__init__()
