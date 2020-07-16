@@ -58,7 +58,10 @@ def gaussian_noise_layer(dim):
 
 def augment(image):
     image = tf.io.read_file(image)
-    image = tf.image.decode_png(image, 1)
+    if FORMAT == 'jpg':
+        image = tf.image.decode_jpeg(image, channels=1)
+    elif FORMAT == 'png':
+        image = tf.image.decode_png(image, channels=1)
     image = tf.image.resize_with_crop_or_pad(image, TEST_DIM, TEST_DIM)
     image = tf.image.convert_image_dtype(image, tf.float32)
     noise = gaussian_noise_layer(TEST_DIM)
