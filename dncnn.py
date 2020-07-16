@@ -2,7 +2,6 @@ from tensorflow.keras import Model
 from tensorflow.keras.initializers import he_uniform
 from tensorflow.keras.layers import Conv2D, BatchNormalization, ReLU
 
-
 class DnCNN(Model):
     def __init__(self, depth=17):
         super(DnCNN, self).__init__()
@@ -17,10 +16,10 @@ class DnCNN(Model):
         self.conv_final = Conv2D(1, 3, padding='same', kernel_initializer=he_uniform())
 
     def call(self, x):
-        x = self.conv1(x)
+        out = self.conv1(x)
         for cbr in self.conv_bn_relu:
-            x = cbr(x)
-        return self.conv_final(x)
+            out = cbr(out)
+        return x - self.conv_final(out)
 
 
 class ConvBNReLU(Model):

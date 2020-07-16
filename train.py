@@ -98,7 +98,7 @@ def augment(image):
     # sum image and noise, clip values between 0 and 1
     noisy_image = tf.clip_by_value(image + noise, 0, 1)
 
-    return noisy_image, noise, image
+    return noisy_image, image
 
 
 def configure_for_train(ds):
@@ -127,7 +127,7 @@ def augment_test(image):
     noise = gaussian_noise_layer(180)
     noisy_image = tf.clip_by_value(image + noise, 0, 1)
 
-    return noisy_image, noise, image
+    return noisy_image, image
 
 
 def configure_for_test(ds):
@@ -142,13 +142,14 @@ def configure_for_test(ds):
 
 
 @tf.function
-def train_step(images, targets, true):
+def train_step(images, targets):
     with tf.GradientTape() as tape:
         # training=True is only needed if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
         predictions = model(images, training=True)
         loss = loss_object(targets, predictions)
-        metric = tf.image.psnr(images - predictions, true, max_val=1.0)
+        predictions = tf.clip_by_value(predictions, 0, 1)
+        metric = tf.image.psnr(predictions, targets, max_val=1.0)
     gradients = tape.gradient(loss, model.trainable_variables)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
@@ -157,12 +158,13 @@ def train_step(images, targets, true):
 
 
 @tf.function
-def test_step(images, labels, true):
+def test_step(images, targets):
     # training=False is only needed if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     predictions = model(images, training=False)
-    t_loss = loss_object(labels, predictions)
-    t_metric = tf.image.psnr(images - predictions, true, max_val=1.0)
+    t_loss = loss_object(targets, predictions)
+    predictions = tf.clip_by_value(predictions, 0, 1)
+    t_metric = tf.image.psnr(predictions, targets, max_val=1.0)
 
     test_loss(t_loss)
     test_metric(t_metric)
