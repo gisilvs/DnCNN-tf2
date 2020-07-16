@@ -24,7 +24,7 @@ parser.add_argument('--train_patch', default=40, type=int, help='size for traini
 parser.add_argument('--test_size', default=180, type=int, help='size for test images')
 parser.add_argument('--format', default='jpg', choices=['jpg', 'png'], type=str, help='image format')
 parser.add_argument('--weights_path', default='weights/vgg', type=str, help='path for saving model weights')
-parser.add_argument('--model_path', default='saved_model/vgg', type=str, help='path for saving whole model')
+parser.add_argument('--model_path', default='saved_models/vgg', type=str, help='path for saving whole model')
 parser.add_argument('--exp_name', default='vgg', type=str, help='name for experiment logs')
 
 args = parser.parse_args()
