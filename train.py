@@ -49,8 +49,8 @@ TEST_DIM = args.test_size
 FORMAT = args.format
 
 # Train and test set directories
-TEST_DIR = 'data/test/*.' + FORMAT
-TRAIN_DIR = 'data/train/*' + FORMAT
+TEST_DIR = args.test_data + '/*.' + FORMAT
+TRAIN_DIR = args.train_data + '/*' + FORMAT
 
 # Paths for saving weights and model
 WEIGHTS_PATH = args.weights_path
