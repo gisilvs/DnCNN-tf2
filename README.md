@@ -29,7 +29,7 @@ The dataset is the [BSDS500](https://www2.eecs.berkeley.edu/Research/Projects/CS
 
 | Noise Level | DnCNN-TensorFlow2 |
 |:-----------:|:-----------------:|
-| 25          |    **27.39**      |
+| 25          |    **27.41**      |
 
 
 
@@ -65,12 +65,13 @@ Among the other command line arguments, you can use `--psnr` to compute the psnr
 $ python quantization.py
 ```
 
+## Quantization Results on set12
 
+|  Noise Level | DnCNN-TensorFlow2-quantized |
+|:------------:|:---------------------------:|
+|      25      |          **27.35**          |
 
-
-
-
-
+Network size reduced from 2.3MB to 610KB.
 
 
 
