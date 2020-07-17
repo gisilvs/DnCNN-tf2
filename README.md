@@ -11,11 +11,11 @@ At test time, the center 180x180 crop of each image is used.
 
 The dataset is the [BSDS500](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html#bsds500). The train and test folder are merged to create the 400 images training set, while the 100 images (which contain the 68 images from the BSD68 dataset) in the valid folder are used as test set. The model is also tested on the 12 popular images for the image denoising benchmark (which can be found in `data/set12`).
 ## Model Architecture
-![graph](../../Downloads/DnCNN-tensorflow-master%202/img/model.png)
+![graph](../../Downloads/DnCNN-tf2-master%202/img/model.png)
 
 
 ## Results
-![compare](../../Downloads/DnCNN-tensorflow-master%202/img/img_7.png)
+![compare](../../Downloads/DnCNN-tf2-master%202/img/img_7.png)
 
 - BSD100 (containing BSD68) Average Result 
  
