@@ -60,7 +60,7 @@ $ python test.py
 By default, the script will use the model in `saved_models/vgg` from the pretrained network.
 
 Among the other command line arguments, you can use `--psnr` to compute the psnr for the quantized network. If you add 
-`--no_q` also the model without quantization will be saved and tested for comparison.
+`--no_q` the model without quantization will also be saved and tested for comparison.
 ```
 $ python quantization.py
 ```
