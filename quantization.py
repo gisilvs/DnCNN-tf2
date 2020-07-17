@@ -11,7 +11,7 @@ parser.add_argument('--test_size', default=180, type=int, help='size for test im
 parser.add_argument('--format', default='png', choices=['jpg', 'png'], type=str, help='image format')
 parser.add_argument('--tflite_dir', default='tflite_models/', type=str, help='path for saving optimized models')
 parser.add_argument('--psnr', action='store_true', help='compute psnr for test data')
-parser.add_argument('--non_q', action='store_true', help='use also non-qunatized model for comparison')
+parser.add_argument('--no_q', action='store_true', help='use also non-qunatized model for comparison')
 
 args = parser.parse_args()
 
@@ -28,7 +28,7 @@ TEST_DIR = args.data_dir + '/*.' + FORMAT
 # Paths for saving weights and plots
 MODEL_PATH = args.model_dir
 TFLITE_DIR = args.tflite_dir
-NON_Q = args.non_q
+NON_Q = args.no_q
 PSNR = args.psnr
 MODEL_NAME = MODEL_PATH.split('/')[-1]
 
