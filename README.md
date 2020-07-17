@@ -1,67 +1,70 @@
-# DnCNN-tensorflow   
-[![AUR](https://img.shields.io/aur/license/yaourt.svg?style=plastic)](LICENSE)
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=plastic)](CONTRIBUTING.md)
-  
-A tensorflow implement of the TIP2017 paper [Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising](http://www4.comp.polyu.edu.hk/~cslzhang/paper/DnCNN.pdf)
+# DnCNN - TensorFlow 2   
+A TensorFlow 2 implementation of the paper [Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising](https://arxiv.org/pdf/1608.03981.pdf)
 
+## Try in Colab..
+If you don't have a GPU, you can use the notebook `dncnn.ipynb` in Google Colab for both training and testing :)
+
+## Dataset
+In this implementation the patches are not precomputed. Instead, at each epoch, a random patch is extracted from each image, and we need to train for more epochs.
+
+At test time, the center 180x180 crop of each image is used.
+
+The dataset is the [BSDS500](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html#bsds500). The train and test folder are merged to create the 400 images training set, while the 100 images (which contain the 68 images from the BSD68 dataset) in the valid folder are used as test set. The model is also tested on the 12 popular images for the image denoising benchmark (which can be found in `data/set12`).
 ## Model Architecture
-![graph](./img/model.png)
+![graph](../../Downloads/DnCNN-tensorflow-master%202/img/model.png)
 
 
 ## Results
-![compare](./img/compare.png)
+![compare](../../Downloads/DnCNN-tensorflow-master%202/img/img_7.png)
 
-- BSD68 Average Result
+- BSD100 (containing BSD68) Average Result 
  
-The average PSNR(dB) results of different methods on the BSD68 dataset.
 
-|  Noise Level | BM3D | WNNM  | EPLL | MLP |  CSF |TNRD  | DnCNN-S | DnCNN-B | DnCNN-tensorflow |
-|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
-| 25  |  28.57  |   28.83   | 28.68  | 28.96 |  28.74 |  28.92 | **29.23** | **29.16**  | **29.17** |
+|  Noise Level | DnCNN-TensorFlow2 |
+|:------------:|:-----------------:|
+|      25      |     **27.37**     |
 
 - Set12 Average Result
 
 
-| Noise Level | DnCNN-S | DnCNN-tensorflow |
-|:-----------:|:-------:|:----------------:|
-| 25          | 30.44   | **30.38**        |
+| Noise Level | DnCNN-TensorFlow2 |
+|:-----------:|:-----------------:|
+| 25          |    **27.39**      |
 
 
 
 ## Requirements
 ```
-tensorflow >= 1.4
-numpy
-opencv
+pip install -r requirements.txt
 ```
-## Dataset
-I used the BDS500 dataset for training, you can download it here: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/BSR/BSR_bsds500.tgz
-It contains 500 RGB images, 400 for training and 100 for testing.
-
-## Data preprocessing and noise generation
-Before training, you have to rescale the images to 180x180 and adding noise to them.
-The folder structure is supposed to be:
-```
-./data/train/original  for the 180x180 original train images
-./data/train/noisy  for the 180x180 noisy train images
-./data/test/original  for the 180x180 original test images
-./data/test/noisy  for the 180x180 noisy test images
-```
-You need the original files for testing just to calculate the PSNR.
-You can denoise without original files: just put the noisy files also in ./data/test/original .
-
+The code was written in Python 3.7
 ## Train
 ```
-$ python main.py
+$ python train.py
 (note: You can add command line arguments according to the source code, for example
     $ python main.py --batch_size 64 )
 ```
-
+You can monitor loss and psnr for both training and test set with tensorboard:
+```
+tensorboard --logdir logs
+```
 
 ## Test
+By default, the script will use the weights in `weights/vgg` from the pretrained network.
 ```
-$ python main.py --phase test
+$ python test.py
+(note: Also here you can add command line arguments, such as --save_plots to save the plots for the results)
 ```
+
+## Quantization
+By default, the script will use the model in `saved_models/vgg` from the pretrained network.
+
+Among the other command line arguments, you can use `--psnr` to compute the psnr for the quantized network. If you add 
+`--no_q` also the model without quantization will be saved and tested for comparison.
+```
+$ python quantization.py
+```
+
 
 
 
