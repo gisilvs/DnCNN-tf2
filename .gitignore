@@ -1,2 +1,5 @@
 data/test/*
 data/train/*
+plots/*
+tflite_models/*
+logs/*
