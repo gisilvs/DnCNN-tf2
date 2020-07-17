@@ -204,12 +204,12 @@ for epoch in range(EPOCHS):
     test_metric.reset_states()
 
     # training loop
-    for images, targets, true in train_ds:
-        train_step(images, targets, true)
+    for images, targets in train_ds:
+        train_step(images, targets)
 
     # test loop
-    for test_images, test_labels, test_true in test_ds:
-        test_step(test_images, test_labels, test_true)
+    for test_images, test_targets in test_ds:
+        test_step(test_images, test_targets)
 
     # log losses and metrics
     with summary_writer.as_default():
