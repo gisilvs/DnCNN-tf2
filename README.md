@@ -50,7 +50,7 @@ tensorboard --logdir logs
 ```
 
 ## Test
-By default, the script will use the weights in `weights/vgg` from the pretrained network.
+By default, the script will use the weights in `weights/vgg` from the pretrained network, and the network is tested on the set12 dataset.
 ```
 $ python test.py
 (note: Also here you can add command line arguments, such as --save_plots to save the plots for the results)
