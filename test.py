@@ -15,7 +15,7 @@ parser.add_argument('--depth', default=17, type=int, help='depth of the model')
 parser.add_argument('--test_size', default=180, type=int, help='size for test images')
 parser.add_argument('--batch_size', default=12, type=int, help='batch size')
 parser.add_argument('--format', default='png', choices=['jpg', 'png'], type=str, help='image format')
-parser.add_argument('--weights_path', default='weights/vgg', type=str, help='path for saving model weights')
+parser.add_argument('--weights_path', default='weights/vgg', type=str, help='path for loading model weights')
 parser.add_argument('--save_plots', action='store_true', help='save plots in plots_dir')
 parser.add_argument('--plots_dir', default='plots', type=str, help='path for saving plots')
 
